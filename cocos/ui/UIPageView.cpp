@@ -490,6 +490,7 @@ void PageView::handleReleaseLogic(Touch *touch)
         Vec2 curPagePos = curPage->getPosition();
         ssize_t pageCount = this->getPageCount();
         float curPageLocation = curPagePos.x;
+        Vec2 deltaTouchPosition = touch->getPosition() - touch->getPreviousLocation();
         float pageWidth = getContentSize().width;
         if (!_usingCustomScrollThreshold) {
             _customScrollThreshold = pageWidth / 2.0;
@@ -497,7 +498,7 @@ void PageView::handleReleaseLogic(Touch *touch)
         float boundary = _customScrollThreshold;
         if (curPageLocation <= -boundary)
         {
-            if (_curPageIdx >= pageCount-1)
+            if (_curPageIdx >= pageCount-1 || deltaTouchPosition.x < -pageWidth/200.0f)
             {
                 scrollPages(-curPageLocation);
             }
@@ -506,7 +507,7 @@ void PageView::handleReleaseLogic(Touch *touch)
                 scrollToPage(_curPageIdx+1);
             }
         }
-        else if (curPageLocation >= boundary)
+        else if (curPageLocation >= boundary || deltaTouchPosition.x > pageWidth/200.0f)
         {
             if (_curPageIdx <= 0)
             {
